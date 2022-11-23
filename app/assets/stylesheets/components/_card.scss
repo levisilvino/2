@@ -1,0 +1,134 @@
+.card-container {
+  background-color: rgba(53, 53, 53, 0.1);
+  border-radius: 8px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  justify-content: space-around;
+  justify-items: stretch;
+  grid-gap: 20px 10px;
+  padding: 10px;
+  min-width: 464px; 
+  min-height: 291px;
+}
+.card {
+  border-radius: 8px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+  min-width: 12rem;
+  h2 {
+    font-size: 16px;
+    font-weight: bold;
+    text-align: end;
+    color: $primary;
+  }
+  h3 {
+    font-size: 14px;
+    font-weight: bold;
+    color: rgb(53, 53, 53);
+  }
+  h4 {
+    font-size: 12px;
+    opacity: .7;
+  }
+  span {
+    font-size: 14px;
+  }
+}
+
+.card-sample {
+  overflow: hidden;
+  background: white;
+  box-shadow: 0 0 15px rgba(0,0,0,0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 10px ;
+  border-radius: 8px;
+  // border: 1px solid red;
+  .card-sample-infos {
+    padding: 16px;
+    // border: 1px solid red;
+  }
+  h2 {
+    font-size: 16px;
+    font-weight: bold;
+    text-align: end;
+    color: $primary;
+    // border: 1px solid red;
+  }
+  h3 {
+    font-size: 14px;
+    color: rgb(53, 53, 53);
+  }
+  p {
+    font-size: 12px;
+    line-height: 1.4;
+    opacity: .7;
+    // border: 1px solid red;
+    margin: 0;
+  }
+  .form-check {
+    margin: 10px;
+    // border: 1px solid red;
+  }
+}
+
+.card-category {
+  background-size: cover;
+  background-position: center;
+  height: 180px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-size: 24px;
+  font-weight: bold;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+  border-radius: 5px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.2);
+  &:hover{
+    text-decoration: none !important;
+    color: rgb(37, 37, 37);
+    text-shadow: 0px 0px 15px rgba(255,255,255,1.0);
+  }
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-gap: 16px;
+}
+
+// Smallest device
+@media (min-width: 100px) and (max-width: 575px) {
+  .cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+// Small devices (landscape phones, 576px and up)
+@media (min-width: 576px) {
+  .cards {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+// Medium devices (tablets, 768px and up)
+@media (min-width: 768px) {
+  .cards {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+// Large devices (desktops, 992px and up)
+@media (min-width: 992px) {
+  .cards {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+  }
+}
+
+// Extra large devices (large desktops, 1200px and up)
+@media (min-width: 1200px) {
+  .cards {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+  }
+}

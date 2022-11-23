@@ -1,0 +1,131 @@
+<div class="container-xxl my-5" style="padding: 0 100px;">
+
+  <h2 class="text-center text-uppercase">Requisição de coleta </h2>
+  <hr>
+
+  <div class="row justify-content-between">
+
+      <!-- Início do card de edição da nova amostra -->
+    <div class="col-4 d-flex flex-column">
+
+      <div class="border border-light rounded background-editable h-100 shadow">
+
+        <div class="justify-content-between mt-3">
+          <h4 class="text-center">Nº da amostra:
+            <br>
+            <span class="text-primary font-weight-bold"><%= @sample.id %></span>
+          </h4>
+        </div>
+
+        <% if @doctors.present? %>
+
+          <div class="px-3">
+
+            <form id="search-doctor" class="mt-3" action="/samples/<%= @sample.id %>" method="post">
+              <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+              <input name="_method" type="hidden" value="patch" />
+
+              <div class="row">
+                <div class=" col-12 form-group">
+                  <label>Médico responsável:</label>
+                  <br>
+                  <select class="select2 form-control text-center" placeholder="Nome..." name="sample[doctor_id]">
+                    <option disabled selected value> ---- Pesquise/Selecione - Doutor ----</option>
+                    <% @doctors.each do |doctor| %>
+                      <option value="<%= doctor.id %>">
+                        <%= "#{doctor.first_name} #{doctor.last_name} - CRM #{doctor.crm}" %>
+                      </option>
+                    <% end %>
+                  </select>
+                </div>
+              </div>
+
+              <div class="row mt-2">
+
+                <div class="col-md-8 col-lg-7 col-xg-6 form-group">
+                  <label>Tipo de amostra:</label>
+                  <br>
+                  <select name="sample[category]"  id="category" placeholder="Categoria..." required="true">
+                    <option disabled selected value> --- Pesquise / Selecione  --- </option>
+                    <% ["Sangue", "Soro", "Segmento de cordão"].each do |category| %>
+                      <option value="<%= category %>">
+                        <%= category %>
+                      </option>
+                    <% end %>
+                  </select>
+                </div>
+
+
+
+                <div class="col-md-4 col-xg-3 form-group integer optional sample_quantity">
+                  <label>Quantidade:</label>
+                  <input class="form-control numeric integer optional"
+                    type="number"
+                    style="text-align: center;"
+                    step="1"
+                    name="sample[quantity]"
+                    id="sample_quantity"
+                    min="0">
+                </div>
+              </div>
+
+              <div class="row mt-2">
+                <div class="col-6 form-group">
+                  <label>Data da coleta:</label>
+                  <input class="form-control my-form-control string optional datepicker flatpickr-input"
+                                  type="hidden"
+                                  name="sample[collected_at]"
+                                  id="sample_collected_at">
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col form-group">
+                  <label>Observação (opcional):</label>
+                  <input class="form-control" type="text" name="sample[observation]">
+                  <%= hidden_field_tag "sample[status]", "criada" %>
+                </div>
+              </div>
+
+              <div class="col text-right mt-1">
+                  <input type="submit" class="btn btn-primary" value="Autorizar coleta">
+              </div>
+            </form>
+          </div>
+        <% else %>
+          <div>
+            <p>Não existem médicos cadastrados no Sample Hub</p>
+          </div>
+        <% end %>
+
+      </div>
+      <!-- FIM do card de edição da nova amostra -->
+    </div>
+
+      <!-- Início do card da SHOW de 01 paciente -->
+    <div class="col-8 d-flex">
+
+        <div class="row jumbotron h-100 shadow">
+          <div class="col-12">
+            <h4 class="text-center"> Dados do Paciente: </h4>
+            <hr>
+          </div>
+          <div class="col-12">
+            <p><h4><%= @sample.patient.first_name %> <%= @sample.patient.last_name %></h4></p>
+          </div>
+          <div class="col">
+
+          <p>Gênero: <%= @sample.patient.gender %></p>
+          <p>Data de nascimento: <%= @sample.patient.born_at.strftime("%d/%m/%Y")%></p>
+          <p>CPF: <%= @sample.patient.cpf %></p>
+          <p>SUS: <%= @sample.patient.sus_code %></p>
+          <p>Endereço: <%= @sample.patient.address %></p>
+          </div>
+        </div>
+
+    </div>
+      <!-- FIM do card da SHOW de 01 paciente -->
+  </div>
+
+</div>
+<!-- fim do container -->

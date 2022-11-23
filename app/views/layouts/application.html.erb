@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= full_title(yield(:title)) %></title>
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+    <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload', defer: true %>
+  </head>
+
+  <body>
+    <%# navbar here %>
+    <%= render 'shared/navbar' %>
+
+    <%# content here %>
+    <%# within section role=main to make footer stick to the bottom even on a short page %>
+    <section role="main">
+      <%= render 'shared/flashes' %>
+      <%= yield %>
+    </section>
+
+    <%# footer here %>
+      <%= render 'shared/footer' %>
+  </body>
+</html>

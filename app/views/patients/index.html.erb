@@ -1,0 +1,31 @@
+<div class="container-xxl my-5" style="padding: 0 100px;">
+  <h2 class="text-center text-uppercase">Pacientes</h2>
+  <hr>
+
+  <div class="d-flex justify-content-center">
+    <div id="patients">
+      <% if @patients.present? %>
+        <%= form_with url: patients_path, method: 'get', remote: true do %>
+          <select name="selectPatient" id="selectPatient" class="select2 form-control ml-auto mr-2" placeholder="Nome...">
+            <option disabled selected value> --- Pesquise / Selecione  --- </option>
+            <% @patients.each do |patient| %>
+              <option value="<%= patient.id %>">
+                <%= "#{patient.first_name} #{patient.last_name}" %>
+              </option>
+            <% end %>
+          </select>
+
+          <input type="submit" class="btn btn-primary mr-auto ml-2" value="Buscar">
+        <% end %>
+        <ul id="results" class="list-inline"></ul>
+      <% else %>
+        <p>Não existem pacientes cadastrados no Sample Hub</p>
+      <% end %>
+    </div>
+  </div>
+
+  <div id="resultsPatient" class="row">
+    
+  </div>
+
+</div>

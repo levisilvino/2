@@ -1,0 +1,169 @@
+<% provide(:title, 'Amostras') %>
+
+<div class="container-xxl my-5" style="padding: 0 100px;">
+  <div class="d-flex justify-content-center">
+    <h2>AMOSTRAS</h2>
+  </div>
+  <hr>
+  <div class="d-flex justify-content-around my-4">
+    <%# INI TABLE SECTION %>
+    <div class="mr-5" style="max-width: 840px;">
+      <h4>Aguardando coleta</h4>
+      <div>
+        <% n_patients = @samples.where("collected_at IS ? OR quantity IS ?", nil, nil).count %>
+        <% if n_patients.zero? %>
+        <div style="min-width: 840px;">
+          <p>Nenhuma autorização de coleta pendente</p>
+        </div>
+        <% else %>
+          <p><%= pluralize(n_patients, "amostra", "amostras") %></p>
+
+          <%# INI TABLE %>
+          <table id="tblsamplesconfirmed" class="table align-middle table table-hover" style="background-color: white; width: auto;">
+            <%# INI HEADER %>
+            <tr style="background-color: #999999; text-shadow: 1px 1px 3px rgba(0,0,0,0.8); color: white;">
+              <th style="text-align: center;">ID</th>
+              <th style="width: 400px;">Paciente</th>
+              <th>Coleta</th>
+              <th style="text-align: center; width: 220px;">Coletado em</th>
+              <th style="text-align: center; width: 100px;">Qtde</th>
+              <th style="text-align: center;"></th>
+            </tr>
+            <%# END HEADER %>
+
+            <% @samples.each do |sample| %>
+              <% if sample.collected_at == nil || sample.quantity == nil %>
+                <%# INI TABLE BODY %>
+                <tr style="background-color: white;">
+
+                  <td scope="row" style="text-align: center; vertical-align: middle;"><%= sample.id %></td>
+                  <td style="vertical-align: middle;"><%=sample.patient.first_name%> <%=sample.patient.last_name%> </td>
+                  <% if sample.category == "Segmento de cordão" %>
+                    <td style="vertical-align: middle;"><%="Cordão"%></td>
+                  <% else %>
+                    <td style="vertical-align: middle;"><%=sample.category%></td>
+                  <% end %>
+
+                  <form action="<%= sample_path(sample) %>" method="post" id="edit_sample_form_<%= sample.id %>" data-turbolinks="false">
+                    <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+                    <input name="_method" type="hidden" value="patch" />
+
+                  <div class="form-group string optional sample_collected_at">
+                    <td style="text-align: center; vertical-align: middle;">
+                        <%= hidden_field_tag "sample[status]", "coletada", id: "sample_status_#{sample.id}" %>
+                        <input class="form-control my-form-control string optional datepicker flatpickr-input" 
+                              type="hidden" 
+                              value="Insira a data da coleta" 
+                              name="sample[collected_at]" 
+                              id="sample_collected_at_<%= sample.id %>">
+                    </td>
+                  </div>
+
+                  <div class="form-group integer optional sample_quantity">
+                    <td>
+                      <input class="form-control numeric integer optional" 
+                        type="number"
+                        style="text-align: center;"
+                        step="1"
+                        name="sample[quantity]"
+                        id="sample_quantity_<%= sample.id %>"
+                        min="0">
+                    </td>
+                  </div>
+
+                    <td style="text-align: center; vertical-align: middle;">
+                      <input type="submit"
+                            name="commit"
+                            value="Submeter"
+                            id="btn-tbl"
+                            data-disable-with="Submeter">
+                    </td>
+                  </form>
+                </tr>
+                <%# END TABLE BODY %>
+              <% end %>
+            <% end %>
+          </table>
+          <%# END TABLE %>
+        <% end %>
+      </div>
+    </div>
+    <%# END TABLE SECTION %>
+
+    <%# INI CARDS SECTION %>
+    <div class="d-flex flex-column">
+      <h4>Aguardando remessa</h4>
+      <% n_samples = @samples.where("collected_at IS NOT ? AND quantity IS NOT ?", nil, nil).count %>
+      <% if n_samples.zero? %>
+        <p>Nenhuma amostra aguardando remessa</p>
+        <div style="width: 50px; height: 50px;"></div>
+        <div class="card-container"></div>
+      <% else %>
+        <p><%= pluralize(n_samples, "amostra", "amostras") %></p>
+
+        <div class="row">
+          <form action="/batches" method="post">
+            <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+
+            <div class="d-flex justify-content-end">
+              <div class="btn btn-secondary" style= "margin: 0 10px 10px 0;" id="checkbox_selector">
+                selecionar tudo
+              </div>
+
+              <input type="submit" value="criar remessa" 
+                      class="btn btn-primary" 
+                      style= "margin: 0 10px 10px 0;">
+            </div>
+
+            <%# INI CARDS CONTAINER %>
+            <div class="card-container">
+
+              <% collected_samples = @samples.where("collected_at IS NOT ? AND quantity IS NOT ?", nil, nil) %>
+              <% collected_samples.each do |sample| %>
+
+                <div class="card">
+                  <h2 class="card-header">Cód. <%= sample.id%></h2>
+                  <div class="card-body">
+                    <h3 class="card-title"><%= sample.patient.first_name%> <%= sample.patient.last_name%></h3>
+                    <h4 class="card-subtitle">
+                      <% if Family.where(receptor: sample.patient).count > 0 %>
+                        RECEPTOR
+                      <% elsif Family.where(donor: sample.patient).count > 0 %>
+                        DOADOR
+                      <% else %>
+                        NÃO APARENTADO
+                      <% end %>
+                    </h4>
+                    <span class="card-text">Sexo: <%= sample.patient.gender == "F" ? "feminino" : "masculino" %></span><br>
+                    <span class="card-text">Idade: <%= calc_age(sample.patient.born_at) %></span><br>
+                    <br>
+                    <span class="card-text">Coleta: <%= "#{sample_category_mask(sample.category)}" %></span><br>
+                    <span class="card-text">Data: <%= date_mask(sample.collected_at) %></span><br>
+                    <span class="card-text">Quantidade: <strong><%= sample.quantity %></strong></span>
+                  </div>
+                  <div class="card-footer d-flex justify-content-center">
+                    <div class="form-check">
+                      <input type="checkbox"
+                            class="form-check-input"
+                            id="checkbox_remessa_<%= sample.id %>"
+                            name="sample_ids[]"
+                            value="<%= sample.id %>"/>
+                      <label for="checkbox_remessa_<%= sample.id %>" 
+                            style="opacity: .8; margin-bottom: 0; margin-left: 0.25rem;">
+                            Selecionar
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+              <% end %>
+
+            </div>
+            <%# END CARDS CONTAINER %>
+          </form>
+        </div>
+      <% end %>
+    </div>
+    <%# END CARDS SECTION %>
+  </div>
+</div>
